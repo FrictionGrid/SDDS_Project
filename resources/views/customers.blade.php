@@ -69,7 +69,11 @@
                 @forelse($customers as $customer)
                 <tr>
                     <td>
-                        <a href="{{ route('customers.show', $customer['id'] ?? 0) }}" class="customer-name">{{ $customer['name'] ?? '-' }}</a>
+                        @if(!empty($customer['id']))
+                            <a href="{{ route('customers.show', $customer['id']) }}" class="customer-name">{{ $customer['name'] ?? '-' }}</a>
+                        @else
+                            <span class="customer-name">{{ $customer['name'] ?? '-' }}</span>
+                        @endif
                     </td>
                     <td>
                         <span class="source-tag">

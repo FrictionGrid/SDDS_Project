@@ -1034,6 +1034,7 @@ body.login-page {
     box-shadow: var(--shadow-md);
     padding: 32px;
     margin-bottom: 28px;
+    margin-top: -32px;
 }
 
 .customer-header__top {
@@ -2139,3 +2140,72 @@ body.login-page {
         width: 100%;
     }
 }
+
+/* Documents */
+    .documents-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.625rem;
+    }
+
+    .document-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0.875rem;
+      background: var(--bg);
+      border-radius: 12px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .document-item:hover {
+      background: #e5e7eb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    }
+
+    .document-info {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+    }
+
+    .document-icon {
+      width: 32px;
+      height: 32px;
+      background: white;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+    }
+
+    .document-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .document-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.125rem;
+    }
+
+    .document-name {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .document-meta {
+      font-size: 0.6875rem;
+      color: var(--muted);
+    }
+
+    .document-action {
+      color: var(--primary);
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }

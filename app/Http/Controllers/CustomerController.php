@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\CustomerApiService;
 use App\Services\CustomerFilterService;
+use App\Services\CustomerDocumentService;
 
 class CustomerController extends Controller
 {
@@ -23,7 +24,7 @@ class CustomerController extends Controller
     }
 
 
-    public function show($id, CustomerApiService $service)
+    public function show($id, CustomerApiService $service, CustomerDocumentService $documentService)
     {
         $customers = $service->getCustomers();
 
@@ -33,7 +34,15 @@ class CustomerController extends Controller
             abort(404, 'ไม่พบข้อมูลลูกค้า');
         }
 
-        return view('customer_detail', compact('customer'));
+        // ดึงประวัติการติดต่อจาก Database
+        $contactHistories = \App\Models\ContactHistory::where('customer_id', $id)
+            ->orderBy('contacted_at', 'desc')
+            ->get();
+
+        // ดึงเอกสารที่เกี่ยวข้องจาก Database
+        $documents = $documentService->getDocuments((int)$id);
+
+        return view('customer_detail', compact('customer', 'contactHistories', 'documents'));
     }
 
     public function clearCache(CustomerApiService $service)

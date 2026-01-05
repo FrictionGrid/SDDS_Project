@@ -6,7 +6,72 @@
 
 @section('breadcrumb', ' Customer Details    ')
 
+@push('styles')
+<style>
+  /* ปุ่มลบสวยๆ */
+  .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+  }
+
+  .btn-icon:hover {
+    background: #f1f5f9;
+    color: #334155;
+  }
+
+  .btn-icon--delete {
+    color: #94a3b8;
+  }
+
+  .btn-icon--delete:hover {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+
+  .btn-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .contact-item__actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+
+  /* แก้ไข card-header ให้ปุ่มอยู่ขวา */
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+</style>
+@endpush
+
 @section('content')
+
+    <!-- Success/Error Messages -->
+    @if(session('success'))
+      <div style="background: #d1fae5; color: #059669; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+        {{ session('success') }}
+      </div>
+    @endif
+
+    @if(session('error'))
+      <div style="background: #fee2e2; color: #dc2626; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+        {{ session('error') }}
+      </div>
+    @endif
 
     <!-- Main Content -->
     <main class="main main--full">
@@ -133,40 +198,25 @@
 
               <div class="contact-history__list">
 
-                <!-- Contact 1 -->
+                @forelse($contactHistories as $history)
                 <div class="contact-item">
-                  <div class="contact-item__icon contact-item__icon--meeting">📅</div>
-                  <div class="contact-item__content">
-                    <div class="contact-item__type">Meeting</div>
-                    <div class="contact-item__description">
-                      ประชุมนำเสนอโซลูชัน CRM และ AI Analytics Platform พร้อมทีมผู้บริหาร
-                    </div>
-                    <div class="contact-item__meta">
-                      <div class="contact-item__by">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                          <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        คุณสมศรี วงศ์ดี
-                      </div>
-                      <div class="contact-item__date">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        10 มิถุนายน 2567, 14:00
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  @php
+                    $iconMap = [
+                      'call' => '📞',
+                      'email' => '📧',
+                      'meeting' => '📅',
+                      'line' => '💬',
+                      'other' => '📝'
+                    ];
+                    $icon = $iconMap[$history->contact_type] ?? '📝';
 
-                <!-- Contact 2 -->
-                <div class="contact-item">
-                  <div class="contact-item__icon contact-item__icon--email">📧</div>
+                    $typeClass = 'contact-item__icon--' . ($history->contact_type ?? 'other');
+                  @endphp
+                  <div class="contact-item__icon {{ $typeClass }}">{{ $icon }}</div>
                   <div class="contact-item__content">
-                    <div class="contact-item__type">Email</div>
+                    <div class="contact-item__type">{{ $history->subject ?? $history->contact_type ?? '-' }}</div>
                     <div class="contact-item__description">
-                      ส่งข้อเสนอราคา (Quotation) สำหรับโครงการ CRM Integration Phase 2
+                      {{ $history->description ?? 'ไม่มีรายละเอียด' }}
                     </div>
                     <div class="contact-item__meta">
                       <div class="contact-item__by">
@@ -174,129 +224,85 @@
                           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                           <circle cx="12" cy="7" r="4"></circle>
                         </svg>
-                        คุณสมศรี วงศ์ดี
+                        {{ $history->contacted_by ?? 'ไม่ระบุ' }}
                       </div>
                       <div class="contact-item__date">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                           <circle cx="12" cy="12" r="10"></circle>
                           <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
-                        8 มิถุนายน 2567, 10:30
+                        {{ $history->contacted_at ? $history->contacted_at->format('d/m/Y H:i') : '-' }}
                       </div>
                     </div>
                   </div>
-                </div>
-
-                <!-- Contact 3 -->
-                <div class="contact-item">
-                  <div class="contact-item__icon contact-item__icon--call">📞</div>
-                  <div class="contact-item__content">
-                    <div class="contact-item__type">โทรศัพท์</div>
-                    <div class="contact-item__description">
-                      ติดตามความคืบหน้าโครงการและหารือเกี่ยวกับการ Customize ฟีเจอร์เพิ่มเติม
-                    </div>
-                    <div class="contact-item__meta">
-                      <div class="contact-item__by">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                          <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        คุณประพันธ์ โปรเจค
-                      </div>
-                      <div class="contact-item__date">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        5 มิถุนายน 2567, 15:45
-                      </div>
-                    </div>
+                  <div class="contact-item__actions">
+                    <form action="{{ route('contacts.destroy', $history->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('ยืนยันการลบ?')">
+                      @csrf
+                      @method('DELETE')
+                    <button class="action-menu__trigger" onclick="alert('เมนูเพิ่มเติม')">⋯</button>
+                    </form>
                   </div>
                 </div>
-
-                <!-- Contact 4 -->
-                <div class="contact-item">
-                  <div class="contact-item__icon contact-item__icon--line">💬</div>
-                  <div class="contact-item__content">
-                    <div class="contact-item__type">LINE Official Account</div>
-                    <div class="contact-item__description">
-                      ลูกค้าสอบถามเกี่ยวกับฟีเจอร์ LINE OA Integration และ Chatbot AI
-                    </div>
-                    <div class="contact-item__meta">
-                      <div class="contact-item__by">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                          <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        AI Bot (Auto-response)
-                      </div>
-                      <div class="contact-item__date">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        3 มิถุนายน 2567, 09:20
-                      </div>
-                    </div>
-                  </div>
+                @empty
+                <div style="text-align: center; padding: 2rem; color: #999;">
+                  ยังไม่มีประวัติการติดต่อ
                 </div>
-
-                <!-- Contact 5 -->
-                <div class="contact-item">
-                  <div class="contact-item__icon contact-item__icon--email">📧</div>
-                  <div class="contact-item__content">
-                    <div class="contact-item__type">Email</div>
-                    <div class="contact-item__description">
-                      ส่งรายงานความคืบหน้าโครงการ CRM Phase 1 และกำหนดการ Go-Live
-                    </div>
-                    <div class="contact-item__meta">
-                      <div class="contact-item__by">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                          <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        คุณวิชัย เทคโนโลยี
-                      </div>
-                      <div class="contact-item__date">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        1 มิถุนายน 2567, 11:00
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Contact 6 -->
-                <div class="contact-item">
-                  <div class="contact-item__icon contact-item__icon--meeting">📅</div>
-                  <div class="contact-item__content">
-                    <div class="contact-item__type">Meeting</div>
-                    <div class="contact-item__description">
-                      Workshop: การใช้งาน CRM System สำหรับทีมขายและทีมการตลาด
-                    </div>
-                    <div class="contact-item__meta">
-                      <div class="contact-item__by">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                          <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        ทีม Training
-                      </div>
-                      <div class="contact-item__date">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        28 พฤษภาคม 2567, 13:00-17:00
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                @endforelse
 
               </div>
             </div>
+
+              <!-- Documents -->
+               <div class="contact-history">
+          <div class="card">
+            <div class="card-header" style="display: flex; align-items: center; justify-content: space-between;">
+              <h2 class="card-title">เอกสารที่เกี่ยวข้อง</h2>
+              <button class="btn btn-primary" id="btnUploadDocument">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                อัพโหลด
+              </button>
+            </div>
+
+            <!-- Hidden Form for Upload -->
+            <form id="uploadDocumentForm" action="{{ route('documents.upload') }}" method="POST" enctype="multipart/form-data" style="display: none;">
+              @csrf
+              <input type="hidden" name="customer_id" value="{{ $customer['id'] }}">
+              <input type="file" name="files[]" id="fileInput" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif">
+            </form>
+            <div class="documents-list">
+              @forelse($documents as $doc)
+              <div class="document-item">
+                <div class="document-info">
+                  <div class="document-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                  </div>
+                  <div class="document-details">
+                    <div class="document-name">{{ $doc->file_name }}</div>
+                    <div class="document-meta">อัพเดท {{ $doc->created_at->format('d/m/Y') }} • {{ $doc->file_size_human }}</div>
+                  </div>
+                </div>
+                <div class="document-actions" style="display: flex; gap: 0.5rem;">
+                  <a href="{{ route('documents.download', $doc->id) }}" class="document-action">ดาวน์โหลด</a>
+                  <form action="{{ route('documents.destroy', $doc->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('ยืนยันการลบเอกสาร?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="document-action document-action--delete" style="background: none; border: none; color: #ef4444; cursor: pointer;">ลบ</button>
+                  </form>
+                </div>
+              </div>
+              @empty
+              <div style="text-align: center; padding: 2rem; color: #999;">
+                ยังไม่มีเอกสาร
+              </div>
+              @endforelse
+            </div>
+          </div>
+          </div>
 
           </div>
 
@@ -315,16 +321,23 @@
               <div class="info-card__body">
                 <div class="info-list-grid">
 
-                  <!-- แหล่งที่มา -->
+                  
+                   <!--ประเภทธุรกิจ -->
                   <div class="info-item">
-                    <div class="info-item__label">แหล่งที่มา</div>
-                    <div class="info-item__value">{{ $customer['source'] ?? '-' }}</div>
+                    <div class="info-item__label">ประเภทธุรกิจ</div>
+                    <div class="info-item__value">{{ $customer['Business_type'] ?? '-' }}</div>
                   </div>
 
                   <!-- ประเภทลูกค้า -->
                   <div class="info-item">
                     <div class="info-item__label">ประเภทลูกค้า</div>
                     <div class="info-item__value">{{ $customer['customer_type'] ?? '-' }}</div>
+                  </div>
+
+                       <!-- แหล่งที่มา -->
+                  <div class="info-item">
+                    <div class="info-item__label">แหล่งที่มา</div>
+                    <div class="info-item__value">{{ $customer['source'] ?? '-' }}</div>
                   </div>
 
                   <!-- สถานะล่าสุด -->
@@ -362,7 +375,13 @@
                   <!-- วันที่เริ่มเป็นลูกค้า -->
                   <div class="info-item">
                     <div class="info-item__label">วันที่เริ่มเป็นลูกค้า</div>
-                    <div class="info-item__value">{{ $customer['start_date'] ?? '-' }}</div>
+                    <div class="info-item__value">
+                      @if(!empty($customer['start_date']))
+                        {{ date('d/m/Y', strtotime($customer['start_date'])) }}
+                      @else
+                        -
+                      @endif
+                    </div>
                   </div>
 
                   <!-- มูลค่าโครงการรวม -->
@@ -392,7 +411,7 @@
             <!-- Related Projects -->
             <div class="projects-section">
               <div class="projects-section__header">
-                <span>โปรเจกต์ที่เกี่ยวข้อง</span>
+                <span>โปรเจกต์ที่เกี่ยวข้อง(ยังไม่เปิดให้บริการ)</span>
                 <button class="btn btn-primary" id="btnAddProject">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -475,7 +494,7 @@
                     <div>
                       <div class="project-card-detail__title">Project3</div>
                       <div class="project-card-detail__type">
-              
+
                       Project3
                       </div>
                     </div>
@@ -514,6 +533,83 @@
       </div>
     </main>
 
+  </div>
+
+  <!-- Add Contact History Modal -->
+  <div class="add-customer-modal" id="addContactModal">
+    <div class="add-customer-modal__overlay"></div>
+    <div class="add-customer-modal__panel">
+      <div class="add-customer-modal__header">
+        <h3>เพิ่มประวัติการติดต่อ</h3>
+        <button class="add-customer-modal__close">✕</button>
+      </div>
+
+      <div class="add-customer-modal__body">
+        <form action="{{ route('contacts.store') }}" method="POST" class="customer-form">
+          @csrf
+          <input type="hidden" name="customer_id" value="{{ $customer['id'] }}">
+
+          <!-- ประเภทการติดต่อ -->
+          <div class="form-group">
+            <label class="form-label">ประเภทการติดต่อ</label>
+            <select name="contact_type" class="form-select">
+              <option value="">เลือกประเภท</option>
+              <option value="call">โทรศัพท์</option>
+              <option value="email">อีเมล</option>
+              <option value="meeting">ประชุม</option>
+              <option value="line">LINE</option>
+              <option value="other">อื่นๆ</option>
+            </select>
+          </div>
+
+          <!-- หัวข้อ -->
+          <div class="form-group">
+            <label class="form-label">หัวข้อ</label>
+            <input type="text" name="subject" class="form-input" placeholder="หัวข้อการติดต่อ">
+          </div>
+
+          <!-- รายละเอียด -->
+          <div class="form-group">
+            <label class="form-label">รายละเอียด</label>
+            <textarea name="description" class="form-textarea" rows="4" placeholder="รายละเอียดการติดต่อ"></textarea>
+          </div>
+
+          <!-- วันที่ติดต่อ -->
+          <div class="form-group">
+            <label class="form-label">วันที่ติดต่อ</label>
+            <input type="date" name="contact_date" class="form-input">
+          </div>
+
+          <!-- เวลาที่ติดต่อ -->
+          <div class="form-group">
+            <label class="form-label">เวลาที่ติดต่อ</label>
+            <input type="time" name="contact_time" class="form-input">
+          </div>
+
+          <!-- ผู้ติดต่อ -->
+          <div class="form-group">
+            <label class="form-label">ผู้ติดต่อ</label>
+            <input type="text" name="contacted_by" class="form-input" placeholder="ชื่อผู้ติดต่อ">
+          </div>
+
+          <!-- สถานะ -->
+          <div class="form-group">
+            <label class="form-label">สถานะ</label>
+            <select name="status" class="form-select">
+              <option value="">เลือกสถานะ</option>
+              <option value="completed">เสร็จสิ้น</option>
+              <option value="pending">รอดำเนินการ</option>
+              <option value="follow_up">ติดตามผล</option>
+            </select>
+          </div>
+
+          <div class="add-customer-modal__footer">
+            <button type="button" class="btn-cancel">ยกเลิก</button>
+            <button type="submit" class="btn-submit">บันทึก</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
   <!-- Add Project Modal -->
@@ -681,4 +777,38 @@
 
 @section('scripts')
     <script src="{{ asset('js/customers.js') }}"></script>
+    <script>
+      // เปิด Modal เพิ่มประวัติการติดต่อ
+      document.getElementById('btnAddContact')?.addEventListener('click', function() {
+        document.getElementById('addContactModal').classList.add('active');
+      });
+
+      // ปิด Modal
+      document.querySelectorAll('.add-customer-modal__close, .btn-cancel').forEach(btn => {
+        btn.addEventListener('click', function() {
+          this.closest('.add-customer-modal').classList.remove('active');
+        });
+      });
+
+      // ปิด Modal เมื่อคลิกนอก panel
+      document.querySelectorAll('.add-customer-modal__overlay').forEach(overlay => {
+        overlay.addEventListener('click', function() {
+          this.closest('.add-customer-modal').classList.remove('active');
+        });
+      });
+
+      // อัพโหลดเอกสาร
+      document.getElementById('btnUploadDocument')?.addEventListener('click', function() {
+        document.getElementById('fileInput').click();
+      });
+
+      document.getElementById('fileInput')?.addEventListener('change', function(e) {
+        if (this.files.length > 0) {
+          const fileNames = Array.from(this.files).map(f => f.name).join(', ');
+          if (confirm(`ต้องการอัพโหลดไฟล์: ${fileNames}?`)) {
+            document.getElementById('uploadDocumentForm').submit();
+          }
+        }
+      });
+    </script>
 @endsection
