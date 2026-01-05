@@ -66,10 +66,10 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($customers as $index => $customer)
+                @forelse($customers as $customer)
                 <tr>
                     <td>
-                        <a href="{{ route('customers.show', $index) }}" class="customer-name">{{ $customer['name'] ?? '-' }}</a>
+                        <a href="{{ route('customers.show', $customer['id'] ?? 0) }}" class="customer-name">{{ $customer['name'] ?? '-' }}</a>
                     </td>
                     <td>
                         <span class="source-tag">

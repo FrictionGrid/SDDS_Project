@@ -51,7 +51,7 @@
                       d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
                     </path>
                   </svg>
-                  {{ $customer['phone'] ?? '-' }}
+                  0{{ $customer['phone'] ?? '-' }}
                 </div>
               </div>
             </div>
@@ -315,79 +315,73 @@
               <div class="info-card__body">
                 <div class="info-list-grid">
 
-                  <!-- แหล่งที่มา (จาก DB) -->
+                  <!-- แหล่งที่มา -->
                   <div class="info-item">
                     <div class="info-item__label">แหล่งที่มา</div>
                     <div class="info-item__value">{{ $customer['source'] ?? '-' }}</div>
                   </div>
 
-                  <!-- ประเภทลูกค้า (จาก DB) -->
+                  <!-- ประเภทลูกค้า -->
                   <div class="info-item">
                     <div class="info-item__label">ประเภทลูกค้า</div>
                     <div class="info-item__value">{{ $customer['customer_type'] ?? '-' }}</div>
                   </div>
 
-                  <!-- สถานะล่าสุด (จาก DB) -->
+                  <!-- สถานะล่าสุด -->
                   <div class="info-item">
                     <div class="info-item__label">สถานะล่าสุด</div>
                     <div class="info-item__value">{{ $customer['latest_status'] ?? '-' }}</div>
                   </div>
 
-                  <!-- ประเภทธุรกิจ (Hardcoded) -->
-                  <div class="info-item">
-                    <div class="info-item__label">ประเภทธุรกิจ</div>
-                    <div class="info-item__value">เทคโนโลยีและซอฟต์แวร์</div>
-                  </div>
-
-                  <!-- อีเมล (จาก DB) -->
+                  <!-- อีเมล -->
                   <div class="info-item info-item--full">
                     <div class="info-item__label">อีเมล</div>
                     <div class="info-item__value">{{ $customer['email'] ?? '-' }}</div>
                   </div>
 
-                  <!-- เบอร์โทรศัพท์ (จาก DB) -->
+                  <!-- เบอร์โทรศัพท์ -->
                   <div class="info-item">
                     <div class="info-item__label">เบอร์โทรศัพท์</div>
-                    <div class="info-item__value">{{ $customer['phone'] ?? '-' }}</div>
+                    <div class="info-item__value">{{ $customer['phone'] ? '0' . $customer['phone'] : '-' }}</div>
                   </div>
 
-                  <!-- เบอร์โทรสำรอง (Hardcoded) -->
+                  <!-- เบอร์โทรสำรอง -->
                   <div class="info-item">
                     <div class="info-item__label">เบอร์โทรสำรอง</div>
-                    <div class="info-item__value">-</div>
+                    <div class="info-item__value">{{ $customer['phone_backup'] ? '0' . $customer['phone_backup'] : '-' }}</div>
                   </div>
 
-                  <!-- ที่อยู่บริษัท (Hardcoded) -->
+                  <!-- ที่อยู่บริษัท -->
                   <div class="info-item info-item--full">
                     <div class="info-item__label">ที่อยู่บริษัท</div>
                     <div class="info-item__value info-item__value--muted">
-                      -
+                      {{ $customer['company_address'] ?? '-' }}
                     </div>
                   </div>
 
-                  <!-- วันที่เริ่มเป็นลูกค้า (Hardcoded) -->
+                  <!-- วันที่เริ่มเป็นลูกค้า -->
                   <div class="info-item">
                     <div class="info-item__label">วันที่เริ่มเป็นลูกค้า</div>
-                    <div class="info-item__value">-</div>
+                    <div class="info-item__value">{{ $customer['start_date'] ?? '-' }}</div>
                   </div>
 
-                  <!-- มูลค่าโครงการรวม (Hardcoded) -->
+                  <!-- มูลค่าโครงการรวม -->
                   <div class="info-item">
                     <div class="info-item__label">มูลค่าโครงการรวม</div>
-                    <div class="info-item__value">-</div>
+                    <div class="info-item__value">{{ $customer['project_value'] ?? '-' }}</div>
                   </div>
 
-                  <!-- Account Manager (Hardcoded) -->
+                  <!-- ผู้ติดต่อหลัก -->
                   <div class="info-item">
-                    <div class="info-item__label">Account Manager</div>
-                    <div class="info-item__value">-</div>
+                    <div class="info-item__label">ผู้ติดต่อหลัก</div>
+                    <div class="info-item__value">{{ $customer['main_contact'] ?? '-' }}</div>
                   </div>
 
-                  <!-- หมายเหตุ (Hardcoded) -->
+                  <!-- หมายเหตุ -->
                   <div class="info-item info-item--full">
                     <div class="info-item__label">หมายเหตุ</div>
                     <div class="info-item__value info-item__value--muted">
-                      -
+                      {{ $customer['note'] ?? '-' }}
                     </div>
                   </div>
 
@@ -416,8 +410,6 @@
                     <div>
                       <div class="project-card-detail__title">Project1</div>
                       <div class="project-card-detail__type">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                          style="width: 14px; height: 14px;">
                           <path
                             d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
                           </path>
