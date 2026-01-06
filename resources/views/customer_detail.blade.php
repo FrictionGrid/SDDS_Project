@@ -6,57 +6,6 @@
 
 @section('breadcrumb', ' Customer Details    ')
 
-@push('styles')
-<style>
-  /* ปุ่มลบสวยๆ */
-  .btn-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 6px;
-    background: transparent;
-    color: #64748b;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    padding: 0;
-  }
-
-  .btn-icon:hover {
-    background: #f1f5f9;
-    color: #334155;
-  }
-
-  .btn-icon--delete {
-    color: #94a3b8;
-  }
-
-  .btn-icon--delete:hover {
-    background: #fee2e2;
-    color: #dc2626;
-  }
-
-  .btn-icon svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  .contact-item__actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-left: auto;
-  }
-
-  /* แก้ไข card-header ให้ปุ่มอยู่ขวา */
-  .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-</style>
-@endpush
 
 @section('content')
 
@@ -236,11 +185,12 @@
                     </div>
                   </div>
                   <div class="contact-item__actions">
-                    <form action="{{ route('contacts.destroy', $history->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('ยืนยันการลบ?')">
-                      @csrf
-                      @method('DELETE')
-                    <button class="action-menu__trigger" onclick="alert('เมนูเพิ่มเติม')">⋯</button>
-                    </form>
+                    <div class="action-menu">
+                      <button class="action-menu__trigger" type="button"
+                              onclick="openActionModal({{ $history->id }}, '{{ $history->contact_type }}', '{{ $history->subject }}', '{{ addslashes($history->description ?? '') }}', '{{ $history->contacted_at ? $history->contacted_at->format('Y-m-d') : '' }}', '{{ $history->contacted_at ? $history->contacted_at->format('H:i') : '' }}', '{{ $history->contacted_by }}', '{{ $history->status }}')">
+                        ⋯
+                      </button>
+                    </div>
                   </div>
                 </div>
                 @empty
@@ -612,6 +562,84 @@
     </div>
   </div>
 
+  <!-- Edit Contact History Modal -->
+  <div class="add-customer-modal" id="editContactModal">
+    <div class="add-customer-modal__overlay"></div>
+    <div class="add-customer-modal__panel">
+      <div class="add-customer-modal__header">
+        <h3>แก้ไขประวัติการติดต่อ</h3>
+        <button class="add-customer-modal__close">✕</button>
+      </div>
+
+      <div class="add-customer-modal__body">
+        <form id="editContactForm" method="POST" class="customer-form">
+          @csrf
+          @method('PUT')
+          <input type="hidden" name="customer_id" value="{{ $customer['id'] }}">
+
+          <!-- ประเภทการติดต่อ -->
+          <div class="form-group">
+            <label class="form-label">ประเภทการติดต่อ</label>
+            <select name="contact_type" id="edit_contact_type" class="form-select">
+              <option value="">เลือกประเภท</option>
+              <option value="call">โทรศัพท์</option>
+              <option value="email">อีเมล</option>
+              <option value="meeting">ประชุม</option>
+              <option value="line">LINE</option>
+              <option value="other">อื่นๆ</option>
+            </select>
+          </div>
+
+          <!-- หัวข้อ -->
+          <div class="form-group">
+            <label class="form-label">หัวข้อ</label>
+            <input type="text" name="subject" id="edit_subject" class="form-input" placeholder="หัวข้อการติดต่อ">
+          </div>
+
+          <!-- รายละเอียด -->
+          <div class="form-group">
+            <label class="form-label">รายละเอียด</label>
+            <textarea name="description" id="edit_description" class="form-textarea" rows="4" placeholder="รายละเอียดการติดต่อ"></textarea>
+          </div>
+
+          <!-- วันที่ติดต่อ -->
+          <div class="form-group">
+            <label class="form-label">วันที่ติดต่อ</label>
+            <input type="date" name="contact_date" id="edit_contact_date" class="form-input">
+          </div>
+
+          <!-- เวลาที่ติดต่อ -->
+          <div class="form-group">
+            <label class="form-label">เวลาที่ติดต่อ</label>
+            <input type="time" name="contact_time" id="edit_contact_time" class="form-input">
+          </div>
+
+          <!-- ผู้ติดต่อ -->
+          <div class="form-group">
+            <label class="form-label">ผู้ติดต่อ</label>
+            <input type="text" name="contacted_by" id="edit_contacted_by" class="form-input" placeholder="ชื่อผู้ติดต่อ">
+          </div>
+
+          <!-- สถานะ -->
+          <div class="form-group">
+            <label class="form-label">สถานะ</label>
+            <select name="status" id="edit_status" class="form-select">
+              <option value="">เลือกสถานะ</option>
+              <option value="completed">เสร็จสิ้น</option>
+              <option value="pending">รอดำเนินการ</option>
+              <option value="follow_up">ติดตามผล</option>
+            </select>
+          </div>
+
+          <div class="add-customer-modal__footer">
+            <button type="button" class="btn-cancel">ยกเลิก</button>
+            <button type="submit" class="btn-submit">บันทึกการแก้ไข</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- Add Project Modal -->
   <div class="add-customer-modal" id="addProjectModal">
     <div class="add-customer-modal__overlay"></div>
@@ -810,5 +838,60 @@
           }
         }
       });
+
+      // ====== Simple Action Modal ======
+      let currentContactId = null;
+      let currentContactData = {};
+
+      function openActionModal(id, contactType, subject, description, contactDate, contactTime, contactedBy, status) {
+        console.log('openActionModal called, id:', id);
+
+        // เก็บข้อมูล
+        currentContactId = id;
+        currentContactData = {
+          id: id,
+          contactType: contactType,
+          subject: subject,
+          description: description,
+          contactDate: contactDate,
+          contactTime: contactTime,
+          contactedBy: contactedBy,
+          status: status
+        };
+
+        // เปิด modal
+        const modal = document.getElementById('actionModal');
+        console.log('Modal element:', modal);
+
+        if (modal) {
+          modal.classList.add('active');
+          console.log('Modal classes:', modal.className);
+        } else {
+          console.error('Modal #actionModal not found!');
+        }
+      }
+
+    
+     
+
+      // ====== Edit Contact Modal ======
+      function openEditContactModal(id, contactType, subject, description, contactDate, contactTime, contactedBy, status) {
+        // ตั้งค่า action URL ของฟอร์ม
+        const form = document.getElementById('editContactForm');
+        form.action = `/contacts/${id}`;
+
+        // กรอกข้อมูลเข้าฟอร์ม
+        document.getElementById('edit_contact_type').value = contactType || '';
+        document.getElementById('edit_subject').value = subject || '';
+        document.getElementById('edit_description').value = description || '';
+        document.getElementById('edit_contact_date').value = contactDate || '';
+        document.getElementById('edit_contact_time').value = contactTime || '';
+        document.getElementById('edit_contacted_by').value = contactedBy || '';
+        document.getElementById('edit_status').value = status || '';
+
+
+        // เปิด modal
+        document.getElementById('editContactModal').classList.add('active');
+      }
     </script>
 @endsection
