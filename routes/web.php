@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerDetailController;
+use App\Http\Controllers\LayoutChatbotController;
+
 
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
 // โชวแบบ realtime ในการแปลงข้อมูล
@@ -36,3 +38,7 @@ Route::get('/document', function () {
 Route::get('/login', function () {
     return view('login');
 });
+
+// หน้า chatbot
+Route::post('/chatbot/chat', [LayoutChatbotController::class, 'chat'])
+    ->name('chatbot.chat');

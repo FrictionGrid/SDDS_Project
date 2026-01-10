@@ -10,9 +10,24 @@ class DocumentAI extends Model
 {
     protected $table = 'documentai';
 
+    protected $primaryKey = 'uuid';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
-        'uuid','title','source_type','original_name','mime_type','disk','path',
-        'size_bytes','status','scope_type','scope_id','metadata','error_message',
+        'uuid',
+        'title',
+        'source_type',
+        'original_name',
+        'mime_type',
+        'disk',
+        'path',
+        'size_bytes',
+        'status',
+        'scope_type',
+        'scope_id',
+        'metadata',
+        'error_message',
     ];
 
     protected $casts = [
@@ -24,7 +39,7 @@ class DocumentAI extends Model
     {
         parent::boot();
 
-  
+
         static::creating(function ($model) {
             if (empty($model->uuid)) {
                 $model->uuid = (string) Str::uuid();
@@ -51,6 +66,6 @@ class DocumentAI extends Model
     public function scopeByScope($query, $scopeType, $scopeId)
     {
         return $query->where('scope_type', $scopeType)
-                    ->where('scope_id', $scopeId);
+            ->where('scope_id', $scopeId);
     }
 }

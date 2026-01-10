@@ -457,6 +457,14 @@ body {
     border-top: 1px solid var(--border);
 }
 
+.chatbot-msg.user {
+    background: var(--primary);
+    color: #fff;
+    align-self: flex-end;
+    margin-left: auto;
+      width: fit-content;  
+}
+
 .chatbot-input input {
     flex: 1;
     padding: 11px 14px;

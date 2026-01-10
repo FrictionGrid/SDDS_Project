@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'SDDS | Enterprise System')</title>
 
     <!-- External CSS -->
@@ -60,12 +61,12 @@
             SDDS AI Assistant
             <button onclick="toggleChat()">✕</button>
         </div>
-        <div class="chatbot-body">
+        <div class="chatbot-body" id="chatbot-body">
             <div class="chatbot-msg bot">สวัสดีครับ มีอะไรให้ช่วยไหม</div>
         </div>
         <div class="chatbot-input">
-            <input type="text" placeholder="พิมพ์คำสั่งถึง AI..." />
-            <button>ส่ง</button>
+          <input type="text" id="chatbot-input" placeholder="พิมพ์คำสั่งถึง AI..." />
+          <button id="chatbot-send">ส่ง</button>
         </div>
     </div>
 
