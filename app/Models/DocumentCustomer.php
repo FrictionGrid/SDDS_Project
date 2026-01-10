@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DocumentCustomer extends Model
 {
-    protected $table = 'DocumnetCustomer';
+    protected $table = 'documentcustomer';
 
     protected $fillable = [
         'customer_id',

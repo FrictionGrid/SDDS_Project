@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('DocumentAI', function (Blueprint $table) {
+        Schema::create('documentai', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
             // ชื่อเรื่องของเอกสาร
@@ -53,6 +53,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ai_documents');
+        Schema::dropIfExists('documentai');
     }
 };

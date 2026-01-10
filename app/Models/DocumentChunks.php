@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DocumentChunks extends Model
 {
-    protected $table = 'document_chunks';
+    protected $table = 'documentchunk';
 
     protected $fillable = [
         'document_id','chunk_index','content','embedding','metadata',

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('DocumentChunks', function (Blueprint $table) {
+        Schema::create('documentchunk', function (Blueprint $table) {
             // ทำให้ข้อความเก็บได้ถูกต้อง
             $table->charset = 'utf8mb4';
             $table->collation = 'utf8mb4_unicode_ci';
@@ -28,10 +28,10 @@ return new class extends Migration
             $table->json('metadata')->nullable();
             $table->timestamps();
 
-            // ความสัมพันธ์กับตาราง DocumentAI (reference ไปที่ uuid แทน id)
+            // ความสัมพันธ์กับตาราง documentai (reference ไปที่ uuid แทน id)
             $table->foreign('document_id')
                 ->references('uuid')
-                ->on('DocumentAI')
+                ->on('documentai')
                 ->cascadeOnDelete();
 
             //  ป้องกัน chunk_index ซ้ำในเอกสารเดียวกัน
@@ -47,6 +47,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('document_chunks');
+        Schema::dropIfExists('documentchunk');
     }
 };

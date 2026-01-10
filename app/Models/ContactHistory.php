@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ContactHistory extends Model
 {
+     protected $table = 'contacthistory';
     protected $fillable = [
         'customer_id',
         'contact_type',

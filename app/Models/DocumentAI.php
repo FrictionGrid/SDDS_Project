@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class DocumentAI extends Model
 {
-    protected $table = 'DocumentAI';
+    protected $table = 'documentai';
 
     protected $fillable = [
         'uuid','title','source_type','original_name','mime_type','disk','path',

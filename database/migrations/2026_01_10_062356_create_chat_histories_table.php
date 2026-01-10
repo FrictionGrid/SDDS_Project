@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ChatHistorys', function (Blueprint $table) {
+        Schema::create('chathistorys', function (Blueprint $table) {
             $table->id();
             // ระบุว่าเป็นแชทครั้งไหน
             $table->uuid('conversation_id')->index();
@@ -42,6 +42,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('chat_histories');
+        Schema::dropIfExists('chathistorys');
     }
 };
