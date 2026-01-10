@@ -20,9 +20,7 @@ class ContactHistory extends Model
         'contacted_at' => 'datetime',
     ];
 
-    /**
-     * Default scope: เรียงตามวันที่ล่าสุดก่อน
-     */
+
     protected static function booted()
     {
         static::addGlobalScope('latest', function ($query) {

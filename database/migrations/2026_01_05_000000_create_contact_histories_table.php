@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('contact_histories', function (Blueprint $table) {
+        Schema::create('ContactHistory', function (Blueprint $table) {
             $table->id();
             $table->integer('customer_id')->nullable()->index()->comment('อ้างอิง ID จาก Google Sheets');
             $table->string('contact_type', 50)->nullable()->comment('ประเภท: call, email, meeting, line, other');

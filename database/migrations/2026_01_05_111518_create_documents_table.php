@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('documents', function (Blueprint $table) {
+        Schema::create('DocumnetCustomer', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('customer_id')->comment('รหัสลูกค้า');
             $table->string('file_name')->comment('ชื่อไฟล์ต้นฉบับ');

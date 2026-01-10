@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Document;
+use App\Models\DocumentCustomer;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -12,7 +12,7 @@ class CustomerDocumentService
 //  ดึงเอกสารทั้งหมดของลูกค้าตาม ID //
     public function getDocuments(int $customerId)
     {
-        return Document::where('customer_id', $customerId)
+        return DocumentCustomer::where('customer_id', $customerId)
             ->orderBy('created_at', 'desc')
             ->get();
     }
@@ -27,7 +27,7 @@ class CustomerDocumentService
       
         $filePath = $file->storeAs($directory, $fileName);
 
-        return Document::create([
+        return DocumentCustomer::create([
             'customer_id' => $customerId,
             'file_name' => $file->getClientOriginalName(),
             'file_path' => $filePath,
@@ -51,7 +51,7 @@ class CustomerDocumentService
 // ดาวโหลดเอกสารเข้าเครื่อง
     public function downloadDocument(int $documentId)
     {
-        $document = Document::findOrFail($documentId);
+        $document = DocumentCustomer::findOrFail($documentId);
 // ไม่ให้โหลดไฟล์มั่วเวลาไม่มีใน storage //
         if (!Storage::exists($document->file_path)) {
             throw new \Exception('File not found in storage');
@@ -61,7 +61,7 @@ class CustomerDocumentService
 // ลบเอกสารออกจาก DB เเละ storage //
     public function deleteDocument(int $documentId): bool
     {
-        $document = Document::findOrFail($documentId);
+        $document = DocumentCustomer::findOrFail($documentId);
 
   
         if (Storage::exists($document->file_path)) {
@@ -84,8 +84,8 @@ class CustomerDocumentService
         return $sizeInBytes <= $maxSizeInBytes;
     }
 // เช็คว่ามีใน DB มั้ย //
-    public function getDocument(int $documentId): Document
+    public function getDocument(int $documentId): DocumentCustomer
     {
-        return Document::findOrFail($documentId);
+        return DocumentCustomer::findOrFail($documentId);
     }
 }

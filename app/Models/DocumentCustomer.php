@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Document extends Model
+class DocumentCustomer extends Model
 {
-    protected $table = 'documents';
+    protected $table = 'DocumnetCustomer';
 
     protected $fillable = [
         'customer_id',
@@ -24,9 +24,7 @@ class Document extends Model
         'updated_at' => 'datetime',
     ];
 
-    /**
-     * Get file size in human readable format
-     */
+
     public function getFileSizeHumanAttribute(): string
     {
         $bytes = $this->file_size;
