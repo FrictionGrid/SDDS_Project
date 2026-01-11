@@ -1,9 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LayoutChatbotController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerDetailController;
-use App\Http\Controllers\LayoutChatbotController;
+use App\Http\Controllers\DocumentController;
 
 
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
@@ -31,13 +32,12 @@ Route::get('/email_ai', function () {
     return view('email_ai');
 });
 
-Route::get('/document', function () {
-    return view('document');
-});
+// หน้า Document
+Route::get('/document', [DocumentController::class, 'index'])->name('document.index');
+Route::post('/document/upload', [DocumentController::class, 'upload'])->name('document.upload');
+Route::delete('/document/{uuid}', [DocumentController::class, 'destroy'])->name('document.destroy');
 
-Route::get('/login', function () {
-    return view('login');
-});
+
 
 // หน้า chatbot
 Route::post('/chatbot/chat', [LayoutChatbotController::class, 'chat'])

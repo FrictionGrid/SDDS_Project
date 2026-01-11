@@ -298,146 +298,127 @@
 @endsection
 
 @section('content')
+
+<div class="content-wrapper">
+
+    {{-- Flash Message --}}
+    @if(session('success'))
+        <div style="background:#ecfeff;color:#0369a1;padding:14px;border-radius:12px;margin-bottom:20px;">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <!-- Upload Section -->
     <div class="document-upload">
-        <div class="upload-box">
+        <form class="upload-box"
+              method="POST"
+              action="{{ route('document.upload') }}"
+              enctype="multipart/form-data">
+            @csrf
+
             <h3 class="upload-box__title">อัปโหลดเอกสาร</h3>
-            <p class="upload-box__description">รองรับไฟล์ TXT และ PDF (สูงสุด 10 MB)</p>
+            <p class="upload-box__description">
+                รองรับ PDF, DOCX, TXT, MD, JSON (สูงสุด 50 MB)
+            </p>
 
             <div class="upload-box__input-wrapper">
                 <label for="fileInput" class="upload-box__label">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>
-                    <span class="upload-box__label-text">เลือกไฟล์</span>
+                    📄 เลือกไฟล์
                 </label>
-                <input type="file" id="fileInput" accept=".txt,.pdf" class="upload-box__input" />
+
+                <input 
+                    type="file" 
+                    id="fileInput" 
+                    name="file"
+                    accept=".pdf,.docx,.txt,.md,.json"
+                    class="upload-box__input" 
+                    required />
+
                 <span class="upload-box__filename" id="fileName">ไม่ได้เลือกไฟล์</span>
             </div>
 
-            <button class="btn-upload">อัปโหลด</button>
-        </div>
+            @error('file')
+                <div style="color:red;font-size:13px;margin-bottom:10px;">{{ $message }}</div>
+            @enderror
+
+            <button type="submit" class="btn-upload">
+                อัปโหลดและให้ AI เรียนรู้
+            </button>
+        </form>
     </div>
 
-    <!-- Documents List Section -->
+    <!-- Documents List -->
     <div class="documents-section">
         <div class="documents-header">
             <h2 class="documents-header__title">เอกสารที่อัปโหลดแล้ว</h2>
-            <span class="documents-header__count">2 ไฟล์</span>
+            <span class="documents-header__count">
+                {{ count($documents) }} ไฟล์
+            </span>
         </div>
 
         <div class="documents-list">
-            <!-- Document Item 1 -->
-            <div class="document-item">
-                <div class="document-item__icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <polyline points="10 9 9 9 8 9"></polyline>
-                    </svg>
-                </div>
-                <div class="document-item__content">
-                    <div class="document-item__name">ข้อมูลบริษัท.txt</div>
-                    <div class="document-item__details">
-                        <span class="document-item__detail">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="3" width="7" height="7"></rect>
-                                <rect x="14" y="3" width="7" height="7"></rect>
-                                <rect x="14" y="14" width="7" height="7"></rect>
-                                <rect x="3" y="14" width="7" height="7"></rect>
-                            </svg>
-                            24 chunks
-                        </span>
-                        <span class="document-item__detail">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-                                <polyline points="13 2 13 9 20 9"></polyline>
-                            </svg>
-                            2.4 MB
-                        </span>
-                        <span class="document-item__detail">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
-                            28 ธ.ค. 2567 เวลา 14:35 น.
-                        </span>
-                    </div>
-                </div>
-                <button class="document-item__delete">ลบ</button>
-            </div>
+            @forelse($documents as $doc)
+                <div class="document-item">
+                    <div class="document-item__icon">📄</div>
 
-            <!-- Document Item 2 -->
-            <div class="document-item">
-                <div class="document-item__icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <polyline points="10 9 9 9 8 9"></polyline>
-                    </svg>
-                </div>
-                <div class="document-item__content">
-                    <div class="document-item__name">resume.pdf</div>
-                    <div class="document-item__details">
-                        <span class="document-item__detail">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="3" width="7" height="7"></rect>
-                                <rect x="14" y="3" width="7" height="7"></rect>
-                                <rect x="14" y="14" width="7" height="7"></rect>
-                                <rect x="3" y="14" width="7" height="7"></rect>
-                            </svg>
-                            12 chunks
-                        </span>
-                        <span class="document-item__detail">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-                                <polyline points="13 2 13 9 20 9"></polyline>
-                            </svg>
-                            1.8 MB
-                        </span>
-                        <span class="document-item__detail">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
-                            27 ธ.ค. 2567 เวลา 09:20 น.
-                        </span>
+                    <div class="document-item__content">
+                        <div class="document-item__name">
+                            {{ $doc['name'] }}
+                        </div>
+
+                        <div class="document-item__details">
+                            <span class="document-item__detail">
+                                {{ $doc['chunks'] }} chunks
+                            </span>
+                            <span class="document-item__detail">
+                                {{ number_format($doc['size']/1024/1024,2) }} MB
+                            </span>
+                            <span class="document-item__detail">
+                                {{ $doc['created_at']->format('d M Y H:i') }}
+                            </span>
+                            <span class="document-item__detail">
+                                {{ $doc['status'] }}
+                            </span>
+                        </div>
                     </div>
+
+                    <form method="POST" action="{{ route('document.destroy', $doc['uuid']) }}">
+                        @csrf
+                        @method('DELETE')
+                        <button class="document-item__delete">ลบ</button>
+                    </form>
                 </div>
-                <button class="document-item__delete">ลบ</button>
-            </div>
+            @empty
+                <div style="color:#888;padding:24px;text-align:center;">
+                    ยังไม่มีเอกสารในระบบ
+                </div>
+            @endforelse
         </div>
     </div>
+
+</div>
+
 @endsection
 
 @section('scripts')
-    <script>
-        // File input - Show selected filename
-        document.addEventListener('DOMContentLoaded', function() {
-            const fileInput = document.getElementById('fileInput');
-            const fileNameDisplay = document.getElementById('fileName');
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const fileInput = document.getElementById('fileInput');
+    const fileName = document.getElementById('fileName');
 
-            if (fileInput && fileNameDisplay) {
-                fileInput.addEventListener('change', function() {
-                    if (this.files && this.files.length > 0) {
-                        fileNameDisplay.textContent = this.files[0].name;
-                        fileNameDisplay.style.fontStyle = 'normal';
-                        fileNameDisplay.style.color = 'var(--primary)';
-                        fileNameDisplay.style.fontWeight = '500';
-                    } else {
-                        fileNameDisplay.textContent = 'ไม่ได้เลือกไฟล์';
-                        fileNameDisplay.style.fontStyle = 'italic';
-                        fileNameDisplay.style.color = 'var(--muted)';
-                        fileNameDisplay.style.fontWeight = '400';
-                    }
-                });
+    if(fileInput){
+        fileInput.addEventListener('change', function(){
+            if(this.files.length > 0){
+                fileName.textContent = this.files[0].name;
+                fileName.style.color = '#2563eb';
+                fileName.style.fontStyle = 'normal';
+            } else {
+                fileName.textContent = 'ไม่ได้เลือกไฟล์';
+                fileName.style.color = '#999';
+                fileName.style.fontStyle = 'italic';
             }
         });
-    </script>
+    }
+});
+</script>
 @endsection
