@@ -8,18 +8,13 @@ use Illuminate\Http\Client\Response;
 
 class LayoutOpenAIService
 {
-    /**
-     * ส่งข้อความไปยัง OpenAI
-     * Service นี้ "ไม่รู้บริบท" และ "ไม่ตัดสินใจ"
-     */
+
     public function chat(array $messages, array $options = []): string
     {
         return $this->callChat($messages, $options);
     }
 
-    /**
-     * Low-level OpenAI API call
-     */
+
     protected function callChat(array $messages, array $options = []): string
     {
         $apiKey  = config('openai.api_key');

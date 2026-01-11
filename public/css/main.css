@@ -448,6 +448,7 @@ body {
 
 .chatbot-msg.bot {
     background: #e0e7ff;
+     width: fit-content;  
 }
 
 .chatbot-input {

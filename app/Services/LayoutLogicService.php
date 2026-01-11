@@ -2,53 +2,30 @@
 
 namespace App\Services;
 
-
-use Illuminate\Support\Collection;
-use App\Services\LayoutSearchService;
-use App\Services\LayoutOpenAIService;
-use App\Services\AgentEmailService;
-use App\Models\ChatHistorys;
-
 class LayoutLogicService
 {
     public function __construct(
         protected LayoutOpenAIService $chatService,
     ) {}
-    // ฟังชั่นหลักสำหรับการจัดการเเชททั่วไป // เป็นการตอบกลับเเบบธรรมดา 
-    // อันนี้ตอบ ส่วนที่ดึงมาคือคิดยังไง //
- public function handleGeneral(string $message, array $context = []): string
-{
-    // เตรียม prompt
-    $messages = [
-        ['role' => 'system', 'content' => 'You are a helpful assistant.'],
-        ['role' => 'user', 'content' => $message],
-    ];
 
-    // เรียก AI
-    return $this->chatService->chat($messages);
-}
-    // ฟังชั่นหลักสำหรับการจัดการเเชทมีบริบทเฉพาะ // 
-    private function handlespecific(array $chunks): string
+
+    public function handleGeneral(array $messages, array $context = []): string
     {
-        $lines = [];
-        foreach ($chunks as $c) {
-            $meta = $c['metadata'] ?? [];
-            $title = $meta['title'] ?? ($c['document_title'] ?? 'Untitled');
-            $chunkIndex = $c['chunk_index'] ?? null;
+        // คุณสามารถปรับ system prompt ตรงนี้ได้
+        $systemPrompt = [
+            'role' => 'system',
+            'content' => 'You are a helpful AI assistant for a business system. Answer clearly and concisely.'
+        ];
 
-            $lines[] = "### Source: {$title} | chunk={$chunkIndex}\n" . trim($c['content'] ?? '');
-        }
-        return implode("\n\n", $lines);
-    }
-
-    private function handleAgentemail(string $message, array $classification, array $context = []): string
-    {
-        $agent = $classification['agent'] ?? 'unknown';
-
-        if ($agent === 'email') {
-            return 'รับคำสั่งแล้ว (Email Agent) แต่ตอนนี้ระบบยังไม่เปิดใช้งานการส่งอีเมล';
+        // ถ้า messages มี system อยู่แล้ว (จาก Memory) ให้แทนที่
+        if ($messages[0]['role'] === 'system') {
+            $messages[0] = $systemPrompt;
+        } else {
+            array_unshift($messages, $systemPrompt);
         }
 
-        return 'รับคำสั่งแล้ว แต่ Agent นี้ยังไม่ถูกเปิดใช้งานในระบบ';
+        return $this->chatService->chat($messages, [
+            'temperature' => 0.2,
+        ]);
     }
 }
