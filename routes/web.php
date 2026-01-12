@@ -33,6 +33,7 @@ Route::delete('/documents/{id}', [CustomerDetailController::class, 'destroyDocum
 Route::get('/email_ai', [EmailAIController::class, 'index'])->name('email_ai.index');
 Route::get('/email_ai/{id}', [EmailAIController::class, 'show'])->name('email_ai.show');
 Route::delete('/email_ai/{id}', [EmailAIController::class, 'destroy'])->name('email_ai.destroy');
+Route::put('/email_ai/{id}', [EmailAIController::class, 'update'])->name('email_ai.update');
 
 // หน้า Document
 Route::get('/document', [DocumentController::class, 'index'])->name('document.index');

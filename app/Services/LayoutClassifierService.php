@@ -38,9 +38,7 @@ class LayoutClassifierService
     {
         $msg = mb_strtolower(trim($message));
 
-        // -------------------------
-        // 1) AgentEmail Detection
-        // -------------------------
+        // Agent email //
         if (
             str_starts_with($msg, 'agentemail') ||
             str_starts_with($msg, 'agent email') ||
@@ -53,25 +51,19 @@ class LayoutClassifierService
             return 'agent_email';
         }
 
-        // -------------------------
-        // 2) Question pattern (facts → specific)
-        // -------------------------
+        // specific question 
         if (preg_match('/(กี่|เมื่อไร|เท่าไร|วันไหน|amount|price|how much|when)/u', $msg)) {
             return 'specific';
         }
 
-        // -------------------------
-        // 3) Business / internal keyword
-        // -------------------------
+       // ดึงคีย์เวิร์ดธมาจับ //
         foreach ($this->businessKeywords as $kw) {
             if (str_contains($msg, mb_strtolower($kw))) {
                 return 'specific';
             }
         }
 
-        // -------------------------
-        // 4) Default → General chat
-        // -------------------------
+      // อื่นๆ ทั่วไป //
         return 'general';
     }
 }

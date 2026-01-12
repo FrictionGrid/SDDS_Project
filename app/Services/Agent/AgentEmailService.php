@@ -28,11 +28,13 @@ class AgentEmailService
         $label = $this->detectRecipientLabel($command);
 
         // filter by label if specified
-        $filtered = $label
-            ? array_values(array_filter($customers, fn ($c) => 
-                strtolower($c['segment'] ?? '') === strtolower($label)
-            ))
-            : $customers;
+       $filtered = $label
+    ? array_values(array_filter($customers, function ($c) use ($label) {
+        return strtolower($c['note'] ?? '') === strtolower($label)
+            || strtolower($c['customer_type'] ?? '') === strtolower($label)
+            || strtolower($c['Business_type'] ?? '') === strtolower($label);
+    }))
+    : $customers;
 
         if (count($filtered) === 0) {
             return "ไม่พบผู้รับในกลุ่ม {$label}";

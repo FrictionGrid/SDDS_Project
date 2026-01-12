@@ -72,4 +72,20 @@ class EmailAIController extends Controller
             return 'just now';
         }
     }
+
+    public function update(Request $request, $id)
+{
+    $draft = Agentemail::findOrFail($id);
+
+    $draft->update([
+        'subject' => $request->subject,
+        'body' => $request->body,
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Draft updated'
+    ]);
+}
+    
 }

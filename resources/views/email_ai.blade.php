@@ -111,5 +111,5 @@ AI will help you draft professional emails based on your CRM data and context.">
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/email_ai.js') }}"></script>
+    <script src="{{ asset('js/emailai.js') }}"></script>
 @endsection

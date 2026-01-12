@@ -20,13 +20,11 @@ class LayoutOrchestrator
     {
         $type = $this->classifier->classify($message);
 
-        // -----------------------------
-        // AgentEmail Flow (ไม่ใช้ RAG / GPT chat)
-        // -----------------------------
+        // ถ้าเป็น Email Agent //
         if ($type === 'agent_email') {
 
             // เก็บคำสั่งของ user ใน chat history
-            $this->memoryService->prepare($message, $context);
+            $prepared = $this->memoryService->prepare($message, $context);
 
             // ให้ AgentEmail ทำงาน
             $result = $this->agentEmail->createDraft(
@@ -35,16 +33,14 @@ class LayoutOrchestrator
             );
 
             // เก็บผลลัพธ์ของ Agent ลง chat history
-            $this->memoryService->storeAssistant($result, $context);
+            $this->memoryService->storeAssistant($result, $prepared);
 
             return $result;
         }
 
-        // -----------------------------
-        // Chat Flow (General / Specific)
-        // -----------------------------
         $prepared = $this->memoryService->prepare($message, $context);
 
+        //กรณี specific/general
         $answer = $type === 'specific'
             ? $this->logicService->handleSpecific($prepared['messages'], $prepared)
             : $this->logicService->handleGeneral($prepared['messages'], $prepared);
