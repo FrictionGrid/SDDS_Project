@@ -5,6 +5,7 @@ use App\Http\Controllers\LayoutChatbotController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerDetailController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\EmailAIController;
 
 
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
@@ -28,9 +29,10 @@ Route::get('/documents/{id}/download', [CustomerDetailController::class, 'downlo
 Route::delete('/documents/{id}', [CustomerDetailController::class, 'destroyDocument'])->name('documents.destroy');
 
 
-Route::get('/email_ai', function () {
-    return view('email_ai');
-});
+// Email AI
+Route::get('/email_ai', [EmailAIController::class, 'index'])->name('email_ai.index');
+Route::get('/email_ai/{id}', [EmailAIController::class, 'show'])->name('email_ai.show');
+Route::delete('/email_ai/{id}', [EmailAIController::class, 'destroy'])->name('email_ai.destroy');
 
 // หน้า Document
 Route::get('/document', [DocumentController::class, 'index'])->name('document.index');

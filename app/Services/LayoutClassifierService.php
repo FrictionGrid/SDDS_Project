@@ -24,28 +24,54 @@ class LayoutClassifierService
 
         // กระบวนการและวิธีการ
         'กระบวนการ','ขั้นตอน','วิธีการ','แนวทาง','วิธี',
-        'process','procedure','step','method','approach','way'
+        'process','procedure','step','method','approach','way',
 
-        // เพิ่มเติม
-        ,'ชื่ออะไร','ที่อยู่','เบอร์โทร','email','อีเมล','contact','address','phone'
-
+        // การติดต่อ
+       'ที่อยู่','เบอร์โทร','email','อีเมล','contact','address','phone'
     ];
 
+    /**
+     * @return string  agent_email | specific | general
+     */
+    // อนาคตต้องมีเขียนใหม่ เดี่ยวช้า //
     public function classify(string $message): string
     {
-        $msg = mb_strtolower($message);
+        $msg = mb_strtolower(trim($message));
 
-        // Question words that usually require facts
+        // -------------------------
+        // 1) AgentEmail Detection
+        // -------------------------
+        if (
+            str_starts_with($msg, 'agentemail') ||
+            str_starts_with($msg, 'agent email') ||
+            str_starts_with($msg, 'email:') ||
+            str_starts_with($msg, 'mail:') ||
+            str_contains($msg, 'ส่งอีเมล') ||
+            str_contains($msg, 'ส่ง email') ||
+            str_contains($msg, 'ส่ง mail')
+        ) {
+            return 'agent_email';
+        }
+
+        // -------------------------
+        // 2) Question pattern (facts → specific)
+        // -------------------------
         if (preg_match('/(กี่|เมื่อไร|เท่าไร|วันไหน|amount|price|how much|when)/u', $msg)) {
             return 'specific';
         }
 
+        // -------------------------
+        // 3) Business / internal keyword
+        // -------------------------
         foreach ($this->businessKeywords as $kw) {
-            if (str_contains($msg, $kw)) {
+            if (str_contains($msg, mb_strtolower($kw))) {
                 return 'specific';
             }
         }
 
+        // -------------------------
+        // 4) Default → General chat
+        // -------------------------
         return 'general';
     }
 }
