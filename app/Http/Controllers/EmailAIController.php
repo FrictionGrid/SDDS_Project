@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Agentemail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use App\Services\Email\AgentEmailSend;
 
 class EmailAIController extends Controller
 {
@@ -87,5 +90,46 @@ class EmailAIController extends Controller
         'message' => 'Draft updated'
     ]);
 }
-    
+
+public function send($id)
+{
+    $draft = Agentemail::lockForUpdate()->findOrFail($id);
+
+    // ป้องกันการส่งซ้ำ
+    if ($draft->status === 'sent') {
+        return response()->json([
+            'success' => false,
+            'message' => 'This email was already sent'
+        ], 409);
+    }
+
+    try {
+        Mail::to($draft->to_email)->send(
+            new AgentEmailSend($draft->subject, $draft->body)
+        );
+
+        $draft->update([
+            'status' => 'sent',
+            'sent_at' => now()
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Email sent successfully'
+        ]);
+
+    } catch (\Throwable $e) {
+
+        Log::error('Email send failed', [
+            'draft_id' => $draft->id,
+            'error' => $e->getMessage()
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Email delivery failed'
+        ], 500);
+    }
+
+}
 }

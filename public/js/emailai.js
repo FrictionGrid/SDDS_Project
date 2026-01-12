@@ -199,15 +199,61 @@
       });
     }
 
-    // ปุ่ม Send (ยังไม่ผูก เพราะคุณยังไม่ได้ทำ API send)
-    const btnSend = $('btnSend');
-    if (btnSend) {
-      btnSend.addEventListener('click', (e) => {
-        e.preventDefault();
-        alert('ปุ่ม Send ยังไม่ได้เชื่อม API (ทำขั้นถัดไปได้)');
-      });
+  // ปุ่ม Send (เชื่อม API จริง)
+const btnSend = $('btnSend');
+if (btnSend) {
+  btnSend.addEventListener('click', async (e) => {
+    e.preventDefault();
+
+    if (!currentDraftId) {
+      alert('ยังไม่ได้เลือก Draft');
+      return;
     }
 
+    const csrf = getCsrfToken();
+    if (!csrf) {
+      alert('ไม่พบ CSRF token');
+      return;
+    }
+
+    if (!confirm('ยืนยันการส่งอีเมลฉบับนี้หรือไม่?')) return;
+
+    setEditorLoading(true);
+
+    try {
+      const data = await fetchJson(`/email_ai/${currentDraftId}/send`, {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': csrf,
+          'Accept': 'application/json',
+        },
+      });
+
+      alert(data?.message || 'ส่งอีเมลสำเร็จ');
+
+      // ลบ draft ออกจาก list
+      const card = document.querySelector(`.draft-card[data-draft-id="${currentDraftId}"]`);
+      if (card) card.remove();
+
+      // รีเซ็ต editor
+      currentDraftId = null;
+      setEditorFields({ to_email: '', subject: '', body: '' });
+
+      // โหลด draft ตัวแรกที่เหลือ (ถ้ามี)
+      const first = document.querySelector('.draft-card');
+      if (first) {
+        setActiveCardById(first.dataset.draftId);
+        await loadDraft(first.dataset.draftId);
+      }
+
+    } catch (err) {
+      console.error('Send email failed:', err);
+      alert('ส่งอีเมลไม่สำเร็จ: ' + err.message);
+    } finally {
+      setEditorLoading(false);
+    }
+  });
+}
     // ถ้าคุณเพิ่มปุ่มลบในอนาคต (เช่น id="btnDelete") ก็เปิดใช้ได้
     // const btnDelete = $('btnDelete');
     // if (btnDelete) btnDelete.addEventListener('click', (e) => { e.preventDefault(); deleteCurrentDraft(); });

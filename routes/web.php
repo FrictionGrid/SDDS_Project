@@ -27,7 +27,8 @@ Route::delete('/projects/{id}', [CustomerDetailController::class, 'destroyProjec
 Route::post('/documents', [CustomerDetailController::class, 'uploadDocument'])->name('documents.upload');
 Route::get('/documents/{id}/download', [CustomerDetailController::class, 'downloadDocument'])->name('documents.download');
 Route::delete('/documents/{id}', [CustomerDetailController::class, 'destroyDocument'])->name('documents.destroy');
-
+Route::post('/email_ai/{id}/send', [EmailAIController::class, 'send'])
+    ->name('email_ai.send');
 
 // Email AI
 Route::get('/email_ai', [EmailAIController::class, 'index'])->name('email_ai.index');
