@@ -10,4 +10,4 @@ Note ที่ติดตั้งเพิ่ม
 2 composer require smalot/pdfparser
 3 composer require phpoffice/phpword
 4 composer require thiagoalessio/tesseract_ocr
-5 sudo apt install tesseract-ocr tesseract-ocr-tha poppler-utils // ยังติดตั้งไม่ได้ สำหรับอนาคต 
+5 sudo apt install tesseract-ocr tesseract-ocr-tha poppler-utils // ยังติดตั้งไม่ได้ สำหรับอนาคต  **
