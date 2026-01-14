@@ -201,8 +201,8 @@ protected function buildActorInput(array $plan): array
             "limit" => $limit
         ],
 
-        "maxResultsPerCrawl" => $limit,
-        "maxPagesPerCrawl" => 0,
+        "maxResultsPerCrawl" => $limit * 2, // จำนวน results ที่ต้องการ (detail pages เท่านั้น)
+        "maxPagesPerCrawl" => $limit + 10, // 1 หน้า list + N หน้า details
         "waitUntil" => ["networkidle2"],
         "useChrome" => false,
         "headless" => true,
@@ -213,40 +213,110 @@ protected function pageFunction(): string
 {
     return <<<'JS'
 async function pageFunction(context) {
-    const { page, request, log, customData } = context;
+    const { page, request, log, customData, enqueueRequest } = context;
 
     log.info(`Scraping: ${request.url}`);
 
-    // รอให้ company list โหลด
-    await page.waitForSelector(".checkbox-list-company", { timeout: 30000 });
+    // ============================================
+    // ระดับ 1: หน้า List - เก็บ links และข้อมูลพื้นฐาน
+    // ============================================
+    if (request.url.includes('exhibitor-list.php')) {
+        await page.waitForSelector(".checkbox-list-company", { timeout: 30000 });
 
-    const results = await page.evaluate(() => {
-        const companyLinks = Array.from(document.querySelectorAll(".checkbox-list-company a"));
+        // ดึงข้อมูลจากหน้า list (ชื่อบริษัท + business_type)
+        const companies = await page.evaluate(() => {
+            const items = Array.from(document.querySelectorAll(".checkbox-list-company li"));
 
-        return companyLinks.map(link => {
-            const companyName = link.innerText.trim();
-            if (!companyName) return null;
+            return items.map(li => {
+                const linkEl = li.querySelector("a");
+                const nameEl = li.querySelector(".title.fw-bold");
+
+                if (!linkEl || !nameEl) return null;
+
+                const companyName = nameEl.innerText.trim();
+                // business_type อยู่ใต้ชื่อบริษัท
+                const businessType = li.innerText.replace(companyName, '').trim();
+
+                return {
+                    name: companyName,
+                    business_type: businessType,
+                    url: linkEl.href
+                };
+            }).filter(x => x && x.name);
+        });
+
+        log.info(`Found ${companies.length} companies in list`);
+
+        // เพิ่ม detail URLs เข้า queue (จำกัดตาม limit)
+        const limit = Math.min(companies.length, customData.limit || 10);
+
+        for (let i = 0; i < limit; i++) {
+            const company = companies[i];
+
+            // เก็บข้อมูลพื้นฐานไว้ใน userData
+            await enqueueRequest({
+                url: company.url,
+                userData: {
+                    companyName: company.name,
+                    businessType: company.business_type
+                }
+            });
+
+            log.info(`Enqueued: ${company.name}`);
+        }
+
+        // ไม่ return อะไรจากหน้า list
+        return [];
+    }
+
+    // ============================================
+    // ระดับ 2: หน้า Detail - ดึงข้อมูลเต็ม
+    // ============================================
+    if (request.url.includes('exhibitor-detail.php')) {
+        const userData = request.userData || {};
+
+        log.info(`Scraping detail for: ${userData.companyName}`);
+
+        // รอให้หน้าโหลด
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // ดึงข้อมูลจากหน้า detail
+        const detailData = await page.evaluate(() => {
+            // ลอง selectors ต่างๆ ที่อาจมีข้อมูล
+            const getTextBySelector = (selector) => {
+                const el = document.querySelector(selector);
+                return el ? el.innerText.trim() : '';
+            };
 
             return {
-                company: companyName,
-                customer_type: "Lead",
-                business_type: "",
-                email: "",
-                phone: "",
-                phone_backup: "",
-                address: "",
-                source_url: location.href
+                email: getTextBySelector('.email, [class*="email"], a[href^="mailto:"]'),
+                phone: getTextBySelector('.phone, [class*="phone"], [class*="tel"]'),
+                address: getTextBySelector('.address, [class*="address"]'),
+                website: getTextBySelector('.website, [class*="website"], a[href^="http"]'),
+                description: getTextBySelector('.description, [class*="description"]'),
             };
-        }).filter(x => x);
-    });
+        });
 
-    log.info(`Found ${results.length} companies from list`);
+        log.info(`Detail scraped:`, detailData);
 
-    return results.map(item => ({
-        ...item,
-        scraped_at: new Date().toISOString(),
-        query: customData.query || ""
-    }));
+        // รวมข้อมูลจาก list + detail
+        return [{
+            company: userData.companyName || '',
+            customer_type: "Lead",
+            business_type: userData.businessType || '',
+            email: detailData.email || '',
+            phone: detailData.phone || '',
+            phone_backup: '',
+            address: detailData.address || '',
+            website: detailData.website || '',
+            description: detailData.description || '',
+            source_url: request.url,
+            scraped_at: new Date().toISOString(),
+            query: customData.query || ""
+        }];
+    }
+
+    return [];
 }
 JS;
 }
