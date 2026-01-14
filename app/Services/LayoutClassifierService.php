@@ -23,7 +23,7 @@ class LayoutClassifierService
         'manager','lead','engineer','programmer','analyst',
 
         // กระบวนการและวิธีการ
-        'กระบวนการ','ขั้นตอน','วิธีการ','แนวทาง','วิธี',
+        'กระบวนการ','ขั้นตอน','วิธีการ','แนวทาง','วิธี','บริษัทชื่ออะไร',
         'process','procedure','step','method','approach','way',
 
         // การติดต่อ
@@ -37,6 +37,24 @@ class LayoutClassifierService
     public function classify(string $message): string
     {
         $msg = mb_strtolower(trim($message));
+
+             // -------------------------
+        // AgentSearch Detection
+        // -------------------------
+        if (
+            str_starts_with($msg, 'agentsearch') ||
+            str_starts_with($msg, 'agent search') ||
+            str_starts_with($msg, 'search:') ||
+            str_contains($msg, 'หาเว็บ') ||
+            str_contains($msg, 'ค้นหาเว็บ') ||
+            str_contains($msg, 'ดึงข้อมูลจากเว็บ') ||
+            str_contains($msg, 'เก็บข้อมูลจากเว็บ') ||
+            str_contains($msg, 'scrape') ||
+            str_contains($msg, 'crawler')
+        ) {
+            return 'agent_search';
+        }
+
 
         // Agent email //
         if (

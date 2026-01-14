@@ -6,6 +6,7 @@ use App\Services\Agent\AgentEmailService;
 use App\Services\LayoutMemoryService;
 use App\Services\LayoutLogicService;
 use App\Services\LayoutClassifierService;
+use App\Services\Agent\AgentSearchService;
 
 class LayoutOrchestrator
 {
@@ -14,9 +15,10 @@ class LayoutOrchestrator
         protected LayoutLogicService $logicService,
         protected LayoutClassifierService $classifier,
         protected AgentEmailService $agentEmail,
+        protected AgentSearchService $agentSearch,
     ) {}
 
-    public function handle(string $message, array $context): string
+      public function handle(string $message, array $context): string
     {
         $type = $this->classifier->classify($message);
 
@@ -37,6 +39,19 @@ class LayoutOrchestrator
 
             return $result;
         }
+
+        if ($type === 'agent_search') {
+
+    $prepared = $this->memoryService->prepare($message, $context);
+
+    $reply = $this->agentSearch->handle(
+        $message,
+        $prepared   // ส่ง context ที่มี user_id, conversation_id
+    );
+
+    $this->memoryService->storeAssistant($reply, $prepared);
+    return $reply;
+}
 
         $prepared = $this->memoryService->prepare($message, $context);
 
