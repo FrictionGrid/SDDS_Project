@@ -2195,3 +2195,230 @@ body.login-page {
     font-weight: 600;
     color: var(--text);
 }
+
+
+/* dashboard */
+/* ===============================
+   Focus Cards
+================================ */
+.focus-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.focus-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    border-left: 4px solid #3b82f6;
+}
+
+.focus-card.urgent  { border-left-color: #ef4444; }
+.focus-card.warning { border-left-color: #f59e0b; }
+.focus-card.info    { border-left-color: #3b82f6; }
+.focus-card.success { border-left-color: #10b981; }
+
+.focus-card__number {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.focus-card__label {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.focus-card__subtitle {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 6px;
+}
+
+/* ===============================
+   Tasks Today
+================================ */
+.tasks {
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    margin-bottom: 24px;
+}
+
+.tasks__header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    font-weight: 600;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.task-item:last-child {
+    border-bottom: none;
+}
+
+.task-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.task-sub {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 2px;
+}
+
+/* ===============================
+   Priority Table
+================================ */
+.priority {
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.priority__header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    font-weight: 600;
+}
+
+.priority table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.priority th {
+    background: #f9fafb;
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #6b7280;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.priority td {
+    padding: 16px;
+    font-size: 14px;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: top;
+}
+
+.priority tr:hover {
+    background: #f9fafb;
+}
+
+.client-name {
+    font-weight: 600;
+}
+
+.client-company {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 2px;
+}
+
+/* Badges */
+.badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge.high {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.badge.medium {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.badge.low {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+/* ===============================
+   Work Log Card
+================================ */
+.card {
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+
+.card__header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+    font-weight: 600;
+}
+
+.card__body {
+    padding: 20px 24px;
+}
+
+/* ===============================
+   Form
+================================ */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 16px;
+}
+
+.form-group label {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.form-group textarea {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    font-size: 14px;
+    min-height: 90px;
+    resize: vertical;
+}
+
+.form-group textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+.form-actions {
+    margin-top: 16px;
+    text-align: right;
+}
+
+/* ===============================
+   Button
+================================ */
+.btn {
+    background: #2563eb;
+    color: #ffffff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #1d4ed8;
+}

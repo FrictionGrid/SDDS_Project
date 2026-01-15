@@ -29,6 +29,7 @@
             </div>
 
             <nav class="nav">
+                 <a href="{{ url('dashboard/sale') }}" class="{{ request()->is('dashboard_sale') ? 'active' : '' }}">Dashboard</a>
                 <a href="{{ url('customers') }}" class="{{ request()->is('customers') ? 'active' : '' }}">Customers</a>
                 <a href="{{ url('email_ai') }}" class="{{ request()->is('email_ai') ? 'active' : '' }}">Email AI</a>
                 <a href="{{ url('document') }}" class="{{ request()->is('document') ? 'active' : '' }}">Document</a>

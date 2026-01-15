@@ -46,3 +46,7 @@ Route::delete('/document/{uuid}', [DocumentController::class, 'destroy'])->name(
 // หน้า chatbot
 Route::post('/chatbot/chat', [LayoutChatbotController::class, 'chat'])
     ->name('chatbot.chat');
+
+Route::get('/dashboard/sale', function () {
+    return view('dashboard_sale');
+});
