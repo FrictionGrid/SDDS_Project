@@ -1,12 +1,39 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LayoutChatbotController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerDetailController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EmailAIController;
 
+
+Route::get('dashboard_sale_task', function () {
+    return view('dashboard_sale_task');
+});
+
+Route::get('dashboard_sale_customer', function () {
+    return view('dashboard_sale_customer');
+});
+
+Route::get('dashboard_sale_KPI', function () {
+    return view('dashboard_sale_KPI');
+});
+
+
+// Root redirect
+Route::get('/', function () {
+    return redirect('/login');
+});
+
+// Authentication Routes
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Protected Routes (Require Authentication)
+Route::middleware(['auth'])->group(function () {
 
 Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
 // โชวแบบ realtime ในการแปลงข้อมูล
@@ -50,3 +77,5 @@ Route::post('/chatbot/chat', [LayoutChatbotController::class, 'chat'])
 Route::get('/dashboard/sale', function () {
     return view('dashboard_sale');
 });
+
+}); // End of auth middleware group

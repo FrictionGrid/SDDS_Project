@@ -29,10 +29,39 @@
             </div>
 
             <nav class="nav">
-                 <a href="{{ url('dashboard/sale') }}" class="{{ request()->is('dashboard_sale') ? 'active' : '' }}">Dashboard</a>
-                <a href="{{ url('customers') }}" class="{{ request()->is('customers') ? 'active' : '' }}">Customers</a>
-                <a href="{{ url('email_ai') }}" class="{{ request()->is('email_ai') ? 'active' : '' }}">Email AI</a>
-                <a href="{{ url('document') }}" class="{{ request()->is('document') ? 'active' : '' }}">Document</a>
+                @auth
+                    @php
+                        $userMenus = getUserMenus();
+                    @endphp
+
+                    @forelse($userMenus as $menu)
+                        <a href="{{ url($menu->url) }}"
+                           class="{{ request()->is(trim($menu->url, '/')) ? 'active' : '' }}"
+                           @if($menu->icon) data-icon="{{ $menu->icon }}" @endif>
+                            {{ $menu->name }}
+                        </a>
+
+                        {{-- Display submenus if any --}}
+                        @if($menu->activeChildren && $menu->activeChildren->count() > 0)
+                            @foreach($menu->activeChildren as $submenu)
+                                <a href="{{ url($submenu->url) }}"
+                                   class="nav__submenu {{ request()->is(trim($submenu->url, '/')) ? 'active' : '' }}"
+                                   @if($submenu->icon) data-icon="{{ $submenu->icon }}" @endif>
+                                    {{ $submenu->name }}
+                                </a>
+                            @endforeach
+                        @endif
+                    @empty
+                        {{-- Default fallback menu when no permissions are set --}}
+                        <a href="{{ url('dashboard/sale') }}" class="{{ request()->is('dashboard/sale') ? 'active' : '' }}">Dashboard</a>
+                        <a href="{{ url('customers') }}" class="{{ request()->is('customers') ? 'active' : '' }}">Customers</a>
+                        <a href="{{ url('email_ai') }}" class="{{ request()->is('email_ai') ? 'active' : '' }}">Email AI</a>
+                        <a href="{{ url('document') }}" class="{{ request()->is('document') ? 'active' : '' }}">Document</a>
+                    @endforelse
+                @else
+                    {{-- Guest users see no menu or login prompt --}}
+                    <a href="{{ url('login') }}">Login</a>
+                @endauth
             </nav>
         </aside>
 
@@ -42,7 +71,26 @@
                 <div class="topbar__title">@yield('page-title')</div>
                 <div class="topbar__menu">@yield('breadcrumb')</div>
             </div>
-            <div class="avatar"></div>
+            <div class="topbar-user">
+                @auth
+                    <div class="user-info">
+                        <div class="user-name">{{ auth()->user()->name }}</div>
+                        <div class="user-email">{{ auth()->user()->email }}</div>
+                    </div>
+                    <form action="{{ route('logout') }}" method="POST" class="logout-form">
+                        @csrf
+                        <button type="submit" class="btn-logout">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                    <div class="avatar"></div>
+                @endauth
+            </div>
         </header>
 
         <!-- Main Content -->

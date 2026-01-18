@@ -15,11 +15,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Seed RBAC data first (Roles, Permissions, Menus)
+        $this->call(RBACSeeder::class);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Then seed Users and assign roles
+        $this->call(UserSeeder::class);
     }
 }

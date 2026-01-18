@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\CheckPermission;
+use App\Http\Middleware\CheckRole;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -11,8 +14,23 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Register custom Authenticate middleware
+        $middleware->redirectGuestsTo(fn () => route('login'));
+
+        // Register middleware aliases for permission and role checking
+        $middleware->alias([
+            'auth' => Authenticate::class,
+            'permission' => CheckPermission::class,
+            'role' => CheckRole::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->create();
+
+// Configure authentication redirect
+app()->bind(
+    \Illuminate\Contracts\Auth\Authenticatable::class,
+    \App\Models\User::class
+);
